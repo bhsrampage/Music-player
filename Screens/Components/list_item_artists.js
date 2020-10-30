@@ -6,6 +6,7 @@ export default class ArtistItem extends Component {
   constructor(props) {
     super(props);
   }
+  
 
   render() {
     return (
@@ -18,7 +19,7 @@ export default class ArtistItem extends Component {
           }>
 
         <Card elevation={0}>
-          <Card.Cover source={{ uri: this.props.item1.image[1]["#text"]}} />
+          <Card.Cover source={{ uri: `${this.props.imgsrc}`}} />
           <Card.Content>
             <Title>{this.props.item1.name}</Title>
             <Paragraph>{this.props.item1.listeners} listeners</Paragraph>

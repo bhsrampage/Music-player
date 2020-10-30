@@ -27,6 +27,7 @@ export default class TopArtists extends React.Component{
         query: '',
         artists: [],
         loading: false,
+        key:"#text",
       };
     
       onChangeSearch = (text) => {
@@ -40,14 +41,14 @@ export default class TopArtists extends React.Component{
         
         fetch(`http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key=${KEY}&format=json`)
         .then(response => {
-            console.log("response1: " + JSON.stringify(response));
+            //console.log("response1: " + JSON.stringify(response));
             if (response.ok) {
                 return response.json();
             }
             throw new Error('error');
         })
         .then(response => {
-            console.log("response2: " + JSON.stringify(response));
+            //console.log("response2: " + JSON.stringify(response));
             this.setState({
                 artists: response.artists.artist,
                 loading: false,
@@ -57,6 +58,34 @@ export default class TopArtists extends React.Component{
 
     search = () => {
         console.log("Search");
+    }
+
+    getSearched =async() => {
+      this.setState({
+        loading: true,
+        artists:[],
+      });
+      if(this.state.query.trim() != ""){
+        fetch(`http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${this.state.query}&api_key=${KEY}&format=json`)
+      .then(response => {
+          //console.log("response1: " + JSON.stringify(response));
+          if (response.ok) {
+              return response.json();
+          }
+          throw new Error('error');
+      })
+      .then(response => {
+          //console.log("response2: " + JSON.stringify(response));
+          this.setState({
+              artists: response.results.artistmatches.artist,
+              loading: false,
+          })
+      });
+      }else{
+        this.getArtists();
+      }
+      
+          
     }
 
     render() {
@@ -70,6 +99,8 @@ export default class TopArtists extends React.Component{
               onChangeText={this.onChangeSearch}
               value={this.state.query}
               onBlur={this.search}
+              onSubmitEditing={this.getSearched}
+              onIconPress={this.getSearched}
             />
             {this.state.artists.length === 0 ? (
               <ActivityIndicator
@@ -87,6 +118,7 @@ export default class TopArtists extends React.Component{
                     <ArtistItem
                       key={item.mbid}
                       item1={item}
+                      imgsrc ={item.image[3][this.state.key]}
                       onPress={(x, y, z) =>
                         console.log("item pressed")
                       }
